@@ -6,7 +6,12 @@ app.get('/', (req, res) => {
 	rp('http://www.taiwanoil.org/z.php?z=oiltw&c=94abf0&tz=Asia/Taipei&tf=1')
     	.then(function (htmlString) {
 			var match = htmlString.match(/[0-9]{2}\.[0-9]{2}<\/td>/gi);
-			var match2 = htmlString.match(/[+|-][0-9]\.[0-9]{2}%/gi);
+			var reg = /[+|-][0-9]\.[0-9]{2}%/gi;
+			var grop = '';
+			if(reg.test(htmlString)){
+				var match2 = htmlString.match(reg);	
+				grop = match2[0];
+			}
 			var gasObj = {
 				"c98"  : match[0].replace('<\/td>',''),
 				"c95"  : match[1].replace('<\/td>',''),
@@ -16,7 +21,7 @@ app.get('/', (req, res) => {
 				"t95"  : match[5].replace('<\/td>',''),
 				"t92"  : match[6].replace('<\/td>',''),
 				"t7"   : match[7].replace('<\/td>',''),
-				"grop" : match2[0],
+				"grop" : grop,
 			}
 			res.json({ success : true,gas:gasObj })
     	})
